@@ -6,20 +6,21 @@ import React from 'react';
 import { GameContext } from '../gameContext';
 
 type Props = {
-  onComplete: VoidFunction
+  setGameState: (state: number) => void
 }
 
-export default function PlayerView({ onComplete }: Props) {
+export default function PlayerView({ setGameState }: Props) {
   const gameState = React.useContext(GameContext)
   const [cards, setCards] = React.useState<Card[]>()
   React.useEffect(() => {
-    if (gameState === 1) {
+    if (gameState === 0) {
+      setCards(undefined)
+    } else if (gameState === 1) { // Game is started for player
       const newCards = []
       newCards.push(getCard())
       newCards.push(getCard())
       setCards(newCards)
-    } else {
-      setCards(undefined)
+      setGameState(2) // Set dealer's start
     }
   }, [gameState])
 
@@ -31,7 +32,11 @@ export default function PlayerView({ onComplete }: Props) {
       />
       {cards &&
       <>
-        <CardView cards={cards} onGoOver={onComplete} key="player"/>
+        <CardView
+          cards={cards}
+          onBust={() => setGameState(6)}  // Set to dealer's win
+          key="player"
+        />
         <View style={styles.actions}>
           <Button
             title="Stay"
@@ -39,7 +44,7 @@ export default function PlayerView({ onComplete }: Props) {
             onPress={
               (e) => {
                 e.preventDefault()
-                // TODO: Make dealer hit until finished
+                setGameState(4) // Set dealer's turn
               }
             }
           />

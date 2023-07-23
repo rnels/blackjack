@@ -7,6 +7,18 @@ type Props = {
   onRestart: VoidFunction
 }
 
+const gameStateMap = {
+  0: 'Not started',
+  1: 'Player start',
+  2: 'Dealer start',
+  3: 'Player turn',
+  4: 'Dealer turn',
+  5: 'Player WIN',
+  6: 'Player LOSE',
+  7: 'Nobody wins...',
+  10: 'Checking hand',
+}
+
 export default function GameView({ onStart, onRestart }: Props) {
 
   const gameState = React.useContext(GameContext)
@@ -24,6 +36,7 @@ export default function GameView({ onStart, onRestart }: Props) {
           }
         }
       />
+      <Text>{gameStateMap[gameState]}</Text>
     </View>
   )
 }

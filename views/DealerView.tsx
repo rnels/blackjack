@@ -6,21 +6,33 @@ import { GameContext } from '../gameContext';
 import React from 'react';
 
 type Props = {
-  onComplete: VoidFunction
+  setGameState: (state: number) => void
 }
 
-export default function DealerView({ onComplete }: Props) {
+export default function DealerView({ setGameState }: Props) {
   const gameState = React.useContext(GameContext)
   const [cards, setCards] = React.useState<Card[]>()
+  const drawCard = () => {
+      // TODO: Draw cards until card value >= 17
+      const newCards = cards!.slice()
+      if (!newCards[1].visible) {
+        newCards[1].visible = true
+      }
+      newCards.push(getCard())
+      setCards(newCards)
+  }
   React.useEffect(() => {
-    if (gameState === 1) { // Game is started
+    if (gameState === 0) {
+      setCards(undefined)
+    } else if (gameState === 2) { // Game is started for dealer
       const newCards = []
       newCards.push(getCard())
       newCards.push(getCard())
       newCards[1].visible = false
       setCards(newCards)
-    } else {
-      setCards(undefined)
+      setGameState(3) // Set player's turn
+    } else if (gameState === 4) { // Dealer's turn
+      drawCard()
     }
   }, [gameState])
   return (
@@ -29,7 +41,13 @@ export default function DealerView({ onComplete }: Props) {
         text="Dealer"
         color="#ececec"
       />
-      {cards && <CardView cards={cards} onGoOver={onComplete} key="dealer"/>}
+      {cards &&
+      <CardView
+        cards={cards}
+        onBust={() => setGameState(5)}  // Set to player's win
+        drawStop={17}
+        key="dealer"
+      />}
     </View>
   )
 }

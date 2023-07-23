@@ -4,10 +4,11 @@ import React from 'react';
 
 type Props = {
   cards: Card[]
-  onGoOver: VoidFunction
+  onBust: VoidFunction
+  drawStop?: number
 }
 
-export default function CardView({ cards, onGoOver }: Props) {
+export default function CardView({ cards, onBust, drawStop }: Props) {
 
   let count = 0
   const cardMap = cards.map((card, i) => {
@@ -23,7 +24,7 @@ export default function CardView({ cards, onGoOver }: Props) {
   })
 
   if (count > 21) {
-    onGoOver()
+    onBust()
   }
 
   return (
